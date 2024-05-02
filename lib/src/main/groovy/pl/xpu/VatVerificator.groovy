@@ -3,8 +3,8 @@
  */
 package pl.xpu
 
-class Library {
-    boolean someLibraryMethod() {
-        true
+class VatVerificator {
+    static boolean verify(String nip) {
+        nip == "123" ? true : false
     }
 }
