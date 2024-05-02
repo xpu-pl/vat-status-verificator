@@ -3,8 +3,36 @@
  */
 package pl.xpu
 
+import groovy.json.JsonSlurper
+
+import java.time.LocalDate
+
 class VatVerificator {
     static boolean verify(String nip) {
-        nip == "123" ? true : false
+        if(!nip){
+            throw new IllegalArgumentException("Please provide valid NIP")
+        }
+        if(nip.size() != 10 ){
+            throw new IllegalArgumentException("Please provide valid NIP. It should be a number with 10 chars")
+        }
+        try{
+            String date = getFormattedDate() //2024-05-02
+            String requestedURL = "https://wl-api.mf.gov.pl/api/search/nip/${nip}?date=${date}"
+            println requestedURL
+            def postmanGet = new URL(requestedURL)
+            def output = new JsonSlurper().parseText(postmanGet.text)
+            if(output?.result?.subject?.statusVat == "Czynny") {
+                return true
+            }
+        } catch (Exception ex){
+
+        }
+        return false
     }
+
+    private static String getFormattedDate(){
+        LocalDate date = LocalDate.now()
+        return date.format( 'yyyy-MM-dd')
+    }
+
 }
